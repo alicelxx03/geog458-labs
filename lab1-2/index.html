@@ -4,8 +4,11 @@
 <head>
    <meta charset='utf-8' />
    <title>my First Map</title>
+   // Make the page responsive to screen size.
    <meta name='viewport' content='width=device-width, initial-scale=1' />
+   // Load the Mapbox stylesheet for map appearance and controls.
    <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+   // Load the MapboX JavaScript library used to create the map.
    <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
    <style>
       body {
@@ -23,38 +26,51 @@
 </head>
 
 <body>
+   // This div is where Mapbox displays the interactive map.
    <div id='map'></div>
    <script>
       // Connect Mapbox using a public access token
       mapboxgl.accessToken = 'pk.eyJ1IjoiYWxpY2VsZWUwMyIsImEiOiJjbXV4MGM5aDMwMjBnMnhvZmo4bnpqcHBiIn0.iapEyLERxOwFdJm-H5lzuw';
 
-      // Create a map centered on UW Seattle with mapbox's Standard basemap and a 3D perspective
+      // Create a Mapbox map inside the HTML element with id="map",
+      // Centered on UW Seattle with mapbox's Standard basemap and a 3D perspective.
       const mymap = new mapboxgl.Map({
          container: 'map',
          style: 'mapbox://styles/mapbox/standard',
          projection: 'globe', //Display the map as a globe since satellite-v9 defaults to Mercator
          center: [-122.305, 47.655],
-         zoom: 14,
+         zoom: 15,
          pitch: 65,
          bearing: -20
       });
 
-      // Add a fullscreen control and a navigation control to the map
+      // Add controls to enter and exit fullscreen mode.
       mymap.addControl(new mapboxgl.FullscreenControl());
+      // Add controls for zooming and rotating the map.
       mymap.addControl(new mapboxgl.NavigationControl());
 
-      // Customize the Mapbox Standard basemap
+      // Customize the Mapbox Standard basemap.
       mymap.on('style.load', () => {
-         // Use dusk lighting because it is easier to see the 3D buildings
+         // Use dusk lighting because it is easier to see the 3D buildings.
          mymap.setConfigProperty('basemap', 'lightPreset', 'dusk');
-         // Hide points of interest labels to reduce clutter on the map
+         // Hide points of interest labels to reduce clutter on the map.
          mymap.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
-         // Show 3D buildings on the map to make it more visually interesting
+         // Show 3D buildings on the map to make it more visually interesting.
          mymap.setConfigProperty('basemap', 'show3dObjects', true);
-         // Hide transit labels to reduce clutter on the map
+         // Hide transit labels to reduce clutter on the map.
          mymap.setConfigProperty('basemap', 'showTransitLabels', false);
       });
    </script>
 </body>
 
 </html>
+
+/*
+Style Property 1: show3dObjects
+I enabled 3D objects to visualize buildings on UW Seattle campus.
+This helps users to view realistic 3D buildings and understand the campus layout better.
+
+Style Property 2: showTransitLabels
+I disabled transit labels to make the map less cluttered.
+This is useful when focusing on buildings, streets, and the overall layout of the UW campus.
+*/
