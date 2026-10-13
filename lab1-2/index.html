@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+   <meta charset='utf-8' />
+   <title>my First Map</title>
+   <meta name='viewport' content='width=device-width, initial-scale=1' />
+   <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+   <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+   <style>
+      body {
+         margin: 0;
+         padding: 0;
+      }
+
+      #map {
+         position: absolute;
+         top: 0;
+         bottom: 0;
+         width: 100%;
+      }
+   </style>
+</head>
+
+<body>
+   <div id='map'></div>
+   <script>
+      // Connect Mapbox using a public access token
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYWxpY2VsZWUwMyIsImEiOiJjbXV4MGM5aDMwMjBnMnhvZmo4bnpqcHBiIn0.iapEyLERxOwFdJm-H5lzuw';
+
+      // Create a map centered on UW Seattle with mapbox's Standard basemap and a 3D perspective
+      const mymap = new mapboxgl.Map({
+         container: 'map',
+         style: 'mapbox://styles/mapbox/standard',
+         projection: 'globe', //Display the map as a globe since satellite-v9 defaults to Mercator
+         center: [-122.305, 47.655],
+         zoom: 14,
+         pitch: 65,
+         bearing: -20
+      });
+
+      // Add a fullscreen control and a navigation control to the map
+      mymap.addControl(new mapboxgl.FullscreenControl());
+      mymap.addControl(new mapboxgl.NavigationControl());
+
+      // Customize the Mapbox Standard basemap
+      mymap.on('style.load', () => {
+         // Use dusk lighting because it is easier to see the 3D buildings
+         mymap.setConfigProperty('basemap', 'lightPreset', 'dusk');
+         // Hide points of interest labels to reduce clutter on the map
+         mymap.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
+         // Show 3D buildings on the map to make it more visually interesting
+         mymap.setConfigProperty('basemap', 'show3dObjects', true);
+         // Hide transit labels to reduce clutter on the map
+         mymap.setConfigProperty('basemap', 'showTransitLabels', false);
+      });
+   </script>
+</body>
+
+</html>
