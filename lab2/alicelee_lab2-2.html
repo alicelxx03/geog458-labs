@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>World Cities: Population Density</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #map-title {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 22px;
+            white-space: nowrap;
+        }
+
+        /* Layout of the legend panel. */
+        #legend {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 110px;
+            background: #fff;
+            margin-right: 20px;
+            margin-bottom: 40px;
+            padding: 10px 20px 10px 10px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        /* Each row for a magnitude value. */
+        .break {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin: 0;
+        }
+
+        /* The circular symbol. */
+        .dot {
+            display: inline-block;
+            margin-top: 5px;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        /* Label next to the symbol. */
+        .dot-label {
+            position: static;
+            top: 0;
+            right: 0;
+            font-style: italic;
+        }
+
+        /* Link color within the legend. */
+        #legend a {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <h1 id="map-title">World Cities: Population Density</h1>
+    <div id="legend"></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWxpY2VsZWUwMyIsImEiOiJjbXV4MGM5aDMwMjBnMnhvZmo4bnpqcHBiIn0.iapEyLERxOwFdJm-H5lzuw';
+        const mymap = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            projection: 'globe',
+            center: [-96, 37.8],
+            zoom: 1
+        });
+
+        // Add the next steps here, inside this script.
+        mymap.on('style.load', () => {
+            mymap.setFog({});
+        });
+
+        mymap.on('load', () => {
+            mymap.addSource('population', {
+                type: 'geojson',
+                data: 'data/world-cities.geojson'
+            });
+            mymap.addLayer({
+                id: 'world-cities',
+                type: 'circle',
+                source: 'population',
+                paint: {
+                    // define the circle radius based on population using a step expression
+                    // classify the population into 5 categories: <100K, 100K-1M, 1M-5M, 5M-10M, >10M
+                    // the radius will be 2, 4, 6, 9, and 13 pixels respectively
+                    'circle-radius': [
+                        'step', ['get', 'population'],
+                        2,
+                        100000, 4,
+                        1000000, 6,
+                        5000000, 9,
+                        10000000, 13
+                    ],
+                    'circle-stroke-width': 0.3,
+                    // define the circle color based on population using a step expression
+                    // choose a color scheme that goes from light to dark as population increases
+                    'circle-color': [
+                        'step', ['get', 'population'],
+                        '#A0A0A0',
+                        100000, '#FFD966',
+                        1000000, '#FF9933',
+                        5000000, '#FF4500',
+                        10000000, '#CC0033'
+                    ],
+                    'circle-stroke-color': '#555555'
+                }
+            });
+        });
+        const legend = document.getElementById('legend');
+        const grades = ['<100K', '100K–1M', '1M–5M', '5M–10M', '10M+'];
+        const radii = [2, 4, 6, 9, 13];
+        const colors = ['#A0A0A0', '#FFD966', '#FF9933', '#FF4500', '#CC0033'];
+        const labels = ['<strong>Population</strong>'];
+
+        for (let i = 0; i < grades.length; i++) {
+            const value = grades[i];
+            const diameter = 2 * radii[i];
+
+            labels.push(
+                '<p class="break"><i class="dot" style="background:' + colors[i] +
+                '; width:' + diameter + 'px; height:' + diameter +
+                'px;"></i> <span class="dot-label" style="top:' +
+                diameter / 2 + 'px;">' + value + '</span></p>'
+            );
+        }
+        legend.innerHTML = labels.join('');
+    </script>
+</body>
+
+</html>
+
+// I defined the circle radius and color based on population using a step expression
+// and classified the population into 5 categories: <100K, 100K-1M, 1M-5M, 5M-10M, >10M.
+// The radius of 5 circles are 2, 4, 6, 9, and 13 pixels respectively
+// and decided on a color scheme that goes from light to dark as population increases, such as 
+// grey, yellow, orange, red, and dark red. I also added a legend to the map 
+// that shows the population categories and their corresponding circle sizes and colors. ƒ
